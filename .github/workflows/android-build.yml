@@ -32,7 +32,8 @@ jobs:
     - name: Build Static Python for Android
       run: |
         cd cpython
-        python android.py build aarch64 --enable-static-link
+        ANDROID_SCRIPT=$(find . -path "*/Android/android.py" -o -path "*/Tools/*/android.py" -o -name android.py | grep -v "test" | head -n 1)
+        python3 "$ANDROID_SCRIPT" build aarch64 --enable-static-link
         
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
