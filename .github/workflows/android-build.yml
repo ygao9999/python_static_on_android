@@ -40,4 +40,6 @@ jobs:
       with:
         name: python-3.14-android-aarch64-static
         path: |
-          cpython/build/android/aarch64/prefix/
+          cpython/cross-build/aarch64-linux-android/
+          cpython/build/
+
