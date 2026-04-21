@@ -1,0 +1,42 @@
+name: Build Static Python 3.14 for Android
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-android-aarch64:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Set up NDK
+      run: |
+        echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.2.9519653"
+        echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.2.9519653" >> $GITHUB_ENV
+
+    - name: Clone CPython source
+      run: |
+        git clone https://github.com/python/cpython.git
+        cd cpython
+        git checkout 3.14
+
+    - name: Build Static Python for Android
+      run: |
+        cd cpython
+        python android.py build aarch64 --enable-static-link
+        
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-3.14-android-aarch64-static
+        path: |
+          cpython/build/android/aarch64/prefix/
